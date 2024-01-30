@@ -1,0 +1,28 @@
+{
+  "name": "@vitalijus-spotos/slate-docx-deserializer",
+  "version": "1.0.0",
+  "repository": "git@github.com:vitalijus-spotos/slate-docx-deserializer.git",
+  "author": "Vitalijus Zimaitis <vitalijus@atinvesticija.com>",
+  "license": "MIT",
+  "type": "module",
+  "source": "src/index.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.esm.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.umd.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "microbundle",
+    "dev": "microbundle watch"
+  },
+  "dependencies": {
+    "microbundle": "^0.15.1"
+  }
+}
