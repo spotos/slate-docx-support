@@ -4,6 +4,7 @@ import './styles.css';
 
 export const makeDeserializer = (jsx) => {
   const deserialize = (el, imageTags) => {
+    console.log("TEST", el);
     if (
       el.attributes &&
       el.attributes.getNamedItem('class') &&
