@@ -4,7 +4,6 @@ import './styles.css';
 
 export const makeDeserializer = (jsx) => {
   const deserialize = (el, imageTags) => {
-    console.log("TEST", el);
     if (
       el.attributes &&
       el.attributes.getNamedItem('class') &&
@@ -22,6 +21,7 @@ export const makeDeserializer = (jsx) => {
   function deserializeList(el, imageTags) {
     const siblings = getSiblings(el)
     console.log(el);
+    console.log(el.attributes);
     const type = 'OL'
     const list_wrapper = document.createElement(type)
     for (let i = 0; i < siblings.length; i++) {
