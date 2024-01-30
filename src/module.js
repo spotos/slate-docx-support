@@ -21,7 +21,7 @@ export const makeDeserializer = (jsx) => {
   function deserializeList(el, imageTags) {
     const siblings = getSiblings(el)
     console.log(el);
-    console.log("THIS IS LIST");
+    console.log(el.attributes.getNamedItem("class"));
     const type = 'OL'
     const list_wrapper = document.createElement(type)
     for (let i = 0; i < siblings.length; i++) {
