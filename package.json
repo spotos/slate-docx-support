@@ -1,7 +1,7 @@
 {
-  "name": "@vitalijus-spotos/slate-docx-deserializer",
+  "name": "@spotos/slate-docx-support",
   "version": "1.0.0",
-  "repository": "git@github.com:vitalijus-spotos/slate-docx-deserializer.git",
+  "repository": "git@github.com:spotos/slate-docx-support.git",
   "author": "Vitalijus Zimaitis <vitalijus@atinvesticija.com>",
   "license": "MIT",
   "type": "module",

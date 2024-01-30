@@ -1,4 +1,6 @@
-import { ELEMENT_TAGS, TEXT_TAGS } from './native'
+import { ELEMENT_TAGS, TEXT_TAGS } from './native';
+
+import './styles.css';
 
 export const makeDeserializer = (jsx) => {
   const deserialize = (el, imageTags) => {
