@@ -20,6 +20,7 @@ export const makeDeserializer = (jsx) => {
 
   function deserializeList(el, imageTags) {
     const siblings = getSiblings(el)
+    console.log(el);
     const type = 'UL'
     const list_wrapper = document.createElement(type)
     for (let i = 0; i < siblings.length; i++) {
