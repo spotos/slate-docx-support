@@ -20,7 +20,7 @@ export const makeDeserializer = (jsx) => {
 
   function deserializeList(el, imageTags) {
     const siblings = getSiblings(el);
-    const type = 'UL'
+    const type = getListType(el);
     const list_wrapper = document.createElement(type)
     for (let i = 0; i < siblings.length; i++) {
       list_wrapper.appendChild(siblings[i])
@@ -93,6 +93,17 @@ export const makeDeserializer = (jsx) => {
         const attrs = ELEMENT_TAGS[nodeName](el)
         return jsx('element', attrs, children)
       }
+
+      if (
+          el.attributes &&
+          el.attributes.getNamedItem('class') &&
+          el.attributes
+              .getNamedItem('class')
+              .value.match(/msocomanchor|MsoCommentText/g)
+      ) {
+        return null  // word comment anchor and text annotations
+      }
+
       if (nodeName === 'H3' || nodeName === 'H2' || nodeName === 'H1') {
         return jsx('element', { type: nodeName, className: nodeName }, children)
       }
@@ -162,13 +173,10 @@ function isList(el) {
 }
 
 // Future functionality: Ordered Lists
-function isOrderedList(el) {
+function getListType(el) {
   const val = el.textContent[0]
   const regex = /^\d+$/
-  if (regex.test(val)) {
-    return true
-  }
-  return false
+  return regex.test(val) ? 'OL' : 'UL';
 }
 
 
@@ -183,7 +191,7 @@ function getTextfromList(el) {
       result.push(child)
     } else if (child.nodeName === 'SPAN') {
       child.textContent = child.textContent.replace(
-        /(^(\W)(?=\s)*)|(o\s)(?!\w)/gm,
+          /(^(\W)(?=\s)*)|(o\s)(?!\w)|[0-9]\)/gm,
         ''
       )
       result.push(child)
