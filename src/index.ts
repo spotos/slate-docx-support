@@ -1,37 +1,106 @@
-import { imagePastingListener } from './utils';
-import { makeDeserializer } from './module';
+import { jsx } from "slate-hyperscript";
 
-export const withDocxDeserializer = (editor, jsx) => {
-    const { insertData, isInline, isVoid, insertFragment } = editor
-    const deserialize = makeDeserializer(jsx)
+import { cleanDocxListElements } from "./utils/cleanDocxListElements";
+import { cleanHtmlTextNodes } from "./utils/cleanHtmlTextNodes";
+import { deserializeList } from "./utils/deserializeList";
+import { deserializeText } from "./utils/deserializeText";
+import { isDocxList } from "./utils/isDocxList";
+import { preCleanHtml } from "./utils/preCleanHtml";
 
-
-    editor.insertFragment = element => {
-        insertFragment(element)
+export const deserialize = (el: Element, markAttributes = {}) => {
+    if (el.nodeType === Node.TEXT_NODE) {
+        return jsx("text", markAttributes, el.textContent);
+    } else if (el.nodeType !== Node.ELEMENT_NODE) {
+        return null;
     }
 
-    editor.isInline = element => {
-        return element.type === 'link' ? true : isInline(element)
+    // Removes all elements with the class "done" that is added to already serialized elements
+    if (
+        el.attributes &&
+        el.attributes.getNamedItem("class") &&
+        el.attributes.getNamedItem("class")?.value.match(/done/g)
+    ) {
+        return null;
     }
 
-    editor.isVoid = element => {
-        return element.type === 'image' ? true : isVoid(element)
+    const nodeAttributes: Record<string, boolean> = { ...markAttributes };
+
+    // define attributes for text nodes
+    switch (el.nodeName) {
+        case "B":
+            nodeAttributes.bold = true;
+            break;
+
+        case "I":
+            nodeAttributes.italic = true;
+            break;
+
+        case "U":
+            nodeAttributes.underline = true;
+            break;
+
+        case "STRIKE":
+            nodeAttributes.strikethrough = true;
+            break;
     }
 
-    editor.insertData = data => {
-        const html = data.getData('text/html')
-        const rtf = data.getData('text/rtf')
-        // image tags have to be cleaned out and converted
-        const imageTags = imagePastingListener(rtf, html)
+    const children = Array.from(el.childNodes)
+        .map(node => deserialize(node as Element, nodeAttributes))
+        .flat();
 
-        if (html) {
-            const parsed_html = new DOMParser().parseFromString(html, 'text/html')
-            const fragment = deserialize(parsed_html.body, imageTags)
-            editor.insertFragment(fragment)
-            return
+    if (children.length === 0) {
+        children.push(jsx("text", nodeAttributes, ""));
+    }
+
+    if (isDocxList(el)) {
+        const { list, siblings } = deserializeList(el);
+
+        if (siblings.length > 0) {
+            siblings.forEach(sibling => {
+                sibling.remove();
+            });
         }
 
-        insertData(data)
+        return deserialize(list, nodeAttributes);
     }
-    return editor
-}
+
+    return deserializeText(el, children);
+};
+
+export const withDocxDeserializer = (editor: any) => {
+    const { insertData, isInline, isVoid, insertFragment } = editor;
+
+    editor.insertFragment = element => {
+        insertFragment(element);
+    };
+
+    editor.isInline = element => {
+        return element.type === "link" ? true : isInline(element);
+    };
+
+    editor.isVoid = element => {
+        return element.type === "image" ? true : isVoid(element);
+    };
+
+    editor.insertData = data => {
+        const html = data.getData("text/html");
+
+        if (html) {
+            const document = new DOMParser().parseFromString(
+                preCleanHtml(html),
+                "text/html"
+            );
+
+            const { body } = document;
+
+            cleanHtmlTextNodes(body);
+            cleanDocxListElements(body);
+
+            const fragment = deserialize(document.body);
+            return editor.insertFragment(fragment);
+        }
+
+        insertData(data);
+    };
+    return editor;
+};

@@ -23,6 +23,7 @@
     "dev": "microbundle watch"
   },
   "dependencies": {
-    "microbundle": "^0.15.1"
+    "microbundle": "^0.15.1",
+    "slate-hyperscript": "^0.100.0"
   }
 }
