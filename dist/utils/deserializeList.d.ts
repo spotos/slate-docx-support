@@ -1,7 +1,4 @@
-export declare const getSiblings: (el: Element) => any[];
+export declare const getSiblings: (el: Element) => never[];
 export declare const getListType: (el: Element) => "OL" | "UL";
-export declare const getTextFromList: (el: Element) => any[];
-export declare const deserializeList: (el: Element) => {
-    list: HTMLElement;
-    siblings: any[];
-};
+export declare const getTextFromList: (el: Element) => never[];
+export declare const deserializeList: (el: Element) => HTMLElement;

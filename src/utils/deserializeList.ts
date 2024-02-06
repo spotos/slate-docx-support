@@ -47,5 +47,5 @@ export const deserializeList = (el: Element) => {
         list_wrapper.appendChild(listElement);
     }
 
-    return { list: list_wrapper, siblings };
+    return list_wrapper;
 };

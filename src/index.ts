@@ -53,13 +53,7 @@ export const deserialize = (el: Element, markAttributes = {}) => {
     }
 
     if (isDocxList(el)) {
-        const { list, siblings } = deserializeList(el);
-
-        if (siblings.length > 0) {
-            siblings.forEach(sibling => {
-                sibling.remove();
-            });
-        }
+        const list = deserializeList(el);
 
         return deserialize(list, nodeAttributes);
     }
